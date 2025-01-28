@@ -1,5 +1,6 @@
 {
   "imports": {
+    "commander": "npm:commander@^13.1.0",
     "viem": "npm:viem@^2.22.16"
   }
 }
