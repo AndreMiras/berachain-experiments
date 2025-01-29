@@ -29,7 +29,7 @@ const honeyTokenAddress = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
 const defaultFromToken = wBeraTokenAddress;
 const defaultToToken = honeyTokenAddress;
 
-const previewSwap = async (
+export const previewSwap = async (
   fromToken: string,
   toToken: string,
   amount: number,
@@ -47,9 +47,6 @@ const previewSwap = async (
       functionName: "symbol",
     }),
   ]);
-  console.log(
-    `Previewing swap of ${amount} ${fromTokenSymbol} to ${toTokenSymbol}...`,
-  );
   const poolIdx = 36000;
   const amountRaw = parseEther(amount.toString());
   const steps = [
