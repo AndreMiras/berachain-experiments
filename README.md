@@ -44,3 +44,13 @@ Monitor and log swap price of a pair.
 ```sh
 deno run --allow-all bera-price-monitor.ts   --from-token 0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03   --to-token 0x05D0dD5135E3eF3aDE32a9eF9Cb06e8D37A6795D   --amount 1   --interval 10   --log-file honey_usdt_quotes.csv
 ```
+
+## Vault Router Redeem
+
+Use the Vault contract to redeem an asset (e.g. USDT) from HONEY.
+
+```sh
+deno run --allow-all bera-redeem.ts \
+--token 0x05D0dD5135E3eF3aDE32a9eF9Cb06e8D37A6795D \
+--amount 1.5
+```

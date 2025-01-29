@@ -1,9 +1,16 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@std/dotenv@*": "0.225.3",
+    "jsr:@std/dotenv@~0.225.3": "0.225.3",
     "npm:commander@*": "13.1.0",
     "npm:commander@^13.1.0": "13.1.0",
     "npm:viem@^2.22.16": "2.22.16_ws@8.18.0"
+  },
+  "jsr": {
+    "@std/dotenv@0.225.3": {
+      "integrity": "a95e5b812c27b0854c52acbae215856d9cce9d4bbf774d938c51d212711e8d4a"
+    }
   },
   "npm": {
     "@adraffy/ens-normalize@1.11.0": {
@@ -82,6 +89,7 @@
   },
   "workspace": {
     "dependencies": [
+      "jsr:@std/dotenv@~0.225.3",
       "npm:commander@^13.1.0",
       "npm:viem@^2.22.16"
     ]
