@@ -2,6 +2,7 @@
  * Monitor and log token swap prices from Berachain CrocSwap.
  * Continuously fetches quotes and logs results to CSV.
  */
+
 import { Command } from "npm:commander";
 import { handleMainError } from "./utils.ts";
 import { previewSwap } from "./bera-croc-preview-multi-swap.ts";
@@ -14,6 +15,30 @@ const formatLogEntry = (result: any) => {
   return `${timestamp},${result.quantityOutDecimal},${result.predictedQuantityOutDecimal}\n`;
 };
 
+const CSV_HEADER = "timestamp,quantityOut,predictedQuantityOut\n";
+
+const ensureLogFile = async (logFile: string) => {
+  try {
+    // Try to read the first few bytes to check if file exists and has content
+    const file = await Deno.open(logFile, { read: true });
+    const buffer = new Uint8Array(CSV_HEADER.length);
+    const bytesRead = await file.read(buffer);
+    file.close();
+
+    if (bytesRead === null || bytesRead === 0) {
+      // File exists but is empty, write header
+      await Deno.writeTextFile(logFile, CSV_HEADER);
+    }
+  } catch (error) {
+    if (error instanceof Deno.errors.NotFound) {
+      // File doesn't exist, create it with header
+      await Deno.writeTextFile(logFile, CSV_HEADER);
+    } else {
+      throw error; // Re-throw other errors
+    }
+  }
+};
+
 const monitorPrices = async (
   fromToken: string,
   toToken: string,
@@ -21,9 +46,7 @@ const monitorPrices = async (
   intervalSeconds: number,
   logFile: string,
 ) => {
-  // Write CSV header
-  const header = "timestamp,quantityOut,predictedQuantityOut\n";
-  await Deno.writeTextFile(logFile, header);
+  await ensureLogFile(logFile);
 
   console.log(`Starting price monitoring. Logging to ${logFile}`);
   console.log(`Interval: ${intervalSeconds} seconds`);
