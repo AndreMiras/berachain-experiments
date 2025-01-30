@@ -46,7 +46,8 @@ deno run --allow-all bera-croc-preview-multi-swap.ts \
 
 ## Swap
 
-Swap STGUSDC for HONEY on BeraCroc MultiSwap.
+Swap STGUSDC for HONEY on BeraCroc MultiSwap (`PRIVATE_KEY` environment variable
+required).
 
 ```sh
 deno run --allow-all bera-croc-multi-swap.ts \
@@ -60,15 +61,43 @@ deno run --allow-all bera-croc-multi-swap.ts \
 Monitor and log swap price of a pair.
 
 ```sh
-deno run --allow-all bera-price-monitor.ts   --from-token 0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03   --to-token 0x05D0dD5135E3eF3aDE32a9eF9Cb06e8D37A6795D   --amount 1   --interval 10   --log-file honey_usdt_quotes.csv
+deno run --allow-all bera-price-monitor.ts \
+--from-token 0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03 \
+--to-token 0x05D0dD5135E3eF3aDE32a9eF9Cb06e8D37A6795D \
+--amount 1 \
+--interval 10 \
+--log-file honey_usdt_quotes.csv
 ```
 
 ## Vault Router Redeem
 
-Use the Vault contract to redeem an asset (e.g. USDT) from HONEY.
+Use the Vault contract to redeem an asset (e.g. USDT) from HONEY (`PRIVATE_KEY`
+environment variable required).
 
 ```sh
 deno run --allow-all bera-redeem.ts \
 --token 0x05D0dD5135E3eF3aDE32a9eF9Cb06e8D37A6795D \
 --amount 1.5
 ```
+
+## Farm strategies
+
+### HONEY-STGUSDC
+
+It's currently possible to farm HONEY-STGUSDC taking profit of STGUSDC being
+slightly overvalued vs HONEY while swapping it on BeraCroc (BEX) and then
+redeeming HONEY -> STGUSDC at 1:1 ratio (minus fees).
+
+```sh
+for i in {1..1000}; do
+  echo i: $i
+  deno run --allow-all bera-croc-multi-swap.ts --from-token 0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c --to-token 0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03 --max
+  deno run --allow-all bera-redeem.ts --token 0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c --max
+  echo i: $i
+done
+```
+
+### HONEY-USDT
+
+In the same fashion as HONEY-STGUSDC, it's possible to farm HONEY-USDT. However
+the Bera Vault Router is often low on USDT making difficult to redeem.
