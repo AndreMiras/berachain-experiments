@@ -7,7 +7,6 @@ import {
   Account,
   createPublicClient,
   createWalletClient,
-  formatUnits,
   http,
   isAddress,
   parseUnits,
@@ -17,11 +16,12 @@ import { privateKeyToAccount } from "viem/accounts";
 import "jsr:@std/dotenv/load";
 import { Command } from "npm:commander";
 import vaultRouterAbi from "./abi/VaultRouter.json" with { type: "json" };
-import { handleMainError } from "./utils.ts";
+import { floorToDigits, getTokenBalance, handleMainError } from "./utils.ts";
 
 // Contract addresses
 const usdtTokenAddress = "0x05D0dD5135E3eF3aDE32a9eF9Cb06e8D37A6795D";
 const VAULT_ROUTER = "0xAd1782b2a7020631249031618fB1Bd09CD926b31";
+const HONEY = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
 const DEFAULT_TOKEN = usdtTokenAddress;
 
 // Initialize clients
@@ -33,7 +33,7 @@ const publicClient = createPublicClient({
 const redeemHoney = async (
   account: Account,
   toToken: string,
-  honeyAmount: string,
+  honeyAmount: number,
 ) => {
   const walletClient = createWalletClient({
     account,
@@ -41,7 +41,7 @@ const redeemHoney = async (
     transport: http(),
   });
 
-  const amountBigInt = parseUnits(honeyAmount, 18);
+  const amountBigInt = parseUnits(honeyAmount.toString(), 18);
 
   // Execute the redeem transaction
   const hash = await walletClient.writeContract({
@@ -72,22 +72,21 @@ const createProgram = () => {
       DEFAULT_TOKEN,
     )
     .option("-a, --amount <number>", "Amount of HONEY to redeem", "1")
+    .option("-m, --max", "Redeem maximum available HONEY balance")
     .addHelpText(
       "after",
       `
-Example:
-  PRIVATE_KEY=your_key deno run script.ts --token 0x1234... --amount 2.5`,
+Examples:
+  # Redeem specific amount
+  PRIVATE_KEY=your_key deno run script.ts --token 0x1234... --amount 2.5
+
+  # Redeem max amount
+  PRIVATE_KEY=your_key deno run script.ts --token 0x1234... --max`,
     )
     .action(async (options) => {
       // Validate token address
       if (!isAddress(options.token)) {
         throw new Error("Invalid token address");
-      }
-
-      // Validate amount
-      const amount = Number(options.amount);
-      if (isNaN(amount) || amount <= 0) {
-        throw new Error("Invalid amount");
       }
 
       // Get private key from environment
@@ -97,7 +96,24 @@ Example:
       }
 
       const account = privateKeyToAccount(privateKey);
-      await redeemHoney(account, options.token, options.amount);
+
+      let amountToRedeem: number;
+      if (options.max) {
+        const { balanceNumber, symbol } = await getTokenBalance(
+          publicClient,
+          HONEY,
+          account.address,
+        );
+        console.log(`Available balance: ${balanceNumber} ${symbol}`);
+        amountToRedeem = floorToDigits(balanceNumber, 2);
+      } else {
+        amountToRedeem = Number(options.amount);
+        if (isNaN(amountToRedeem) || amount <= 0) {
+          throw new Error("Invalid amount");
+        }
+      }
+
+      await redeemHoney(account, options.token, amountToRedeem);
     });
 
   return program;

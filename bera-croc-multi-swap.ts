@@ -17,7 +17,7 @@ import { berachainTestnetbArtio } from "viem/chains";
 import { Command } from "npm:commander";
 import { privateKeyToAccount } from "viem/accounts";
 import BeraCrocAbi from "./abi/BeraCrocMultiSwap.json" with { type: "json" };
-import { getTokenBalance, handleMainError } from "./utils.ts";
+import { floorToDigits, getTokenBalance, handleMainError } from "./utils.ts";
 import "jsr:@std/dotenv/load";
 
 const client = createPublicClient({
@@ -170,7 +170,7 @@ Examples:
           account.address,
         );
         console.log(`Available balance: ${balanceNumber} ${symbol}`);
-        amountToSwap = balanceNumber;
+        amountToSwap = floorToDigits(balanceNumber, 2);
       } else {
         amountToSwap = Number(options.amount);
         if (isNaN(amountToSwap) || amountToSwap <= 0) {
