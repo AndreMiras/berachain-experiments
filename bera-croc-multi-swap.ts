@@ -17,8 +17,7 @@ import { berachainTestnetbArtio } from "viem/chains";
 import { Command } from "npm:commander";
 import { privateKeyToAccount } from "viem/accounts";
 import BeraCrocAbi from "./abi/BeraCrocMultiSwap.json" with { type: "json" };
-import { handleMainError } from "./utils.ts";
-import { previewSwap } from "./bera-croc-preview-multi-swap.ts";
+import { getTokenBalance, handleMainError } from "./utils.ts";
 import "jsr:@std/dotenv/load";
 
 const client = createPublicClient({
@@ -32,6 +31,31 @@ const honeyTokenAddress = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
 const defaultFromToken = wBeraTokenAddress;
 const defaultToToken = honeyTokenAddress;
 
+const getMaxAmount = async (tokenAddress: string, accountAddress: string) => {
+  const [balance, decimals, symbol] = await Promise.all([
+    client.readContract({
+      address: tokenAddress,
+      abi: erc20Abi,
+      functionName: "balanceOf",
+      args: [accountAddress],
+    }),
+    client.readContract({
+      address: tokenAddress,
+      abi: erc20Abi,
+      functionName: "decimals",
+    }),
+    client.readContract({
+      address: tokenAddress,
+      abi: erc20Abi,
+      functionName: "symbol",
+    }),
+  ]);
+
+  const balanceDecimal = Number(formatUnits(balance, decimals));
+  console.log(`Available balance: ${balanceDecimal} ${symbol}`);
+  return balanceDecimal;
+};
+
 const executeSwap = async (
   account: Account,
   fromToken: string,
@@ -44,10 +68,6 @@ const executeSwap = async (
     transport: http(),
   });
 
-  // Preview swap first
-  const preview = await previewSwap(fromToken, toToken, fromAmountDecimal);
-  console.log("Swap Preview:", preview);
-
   const fromTokenDecimals = await client.readContract({
     address: fromToken,
     abi: erc20Abi,
@@ -57,6 +77,7 @@ const executeSwap = async (
     fromAmountDecimal.toString(),
     fromTokenDecimals,
   );
+
   // Check and set approval if needed
   const currentAllowance = await client.readContract({
     address: fromToken,
@@ -116,22 +137,21 @@ const createProgram = () => {
     )
     .option("-t, --to-token <address>", "Token to swap to", defaultToToken)
     .option("-a, --amount <number>", "Amount to swap", "1")
+    .option("-m, --max", "Use maximum available balance")
     .addHelpText(
       "after",
       `
-Example:
-  PRIVATE_KEY=your_key deno run script.ts --from-token 0x7507c1dc16935B82698e4C63f2746A2fCf994dF8 --to-token 0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03 --amount 0.5`,
+Examples:
+  # Swap specific amount
+  PRIVATE_KEY=your_key deno run script.ts --from-token 0x7507c1dc16935B82698e4C63f2746A2fCf994dF8 --to-token 0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03 --amount 0.5
+
+  # Swap max amount
+  PRIVATE_KEY=your_key deno run script.ts --from-token 0x7507... --to-token 0x0E4a... --max`,
     )
     .action(async (options) => {
       // Validate addresses
       if (!isAddress(options.fromToken) || !isAddress(options.toToken)) {
         throw new Error("Invalid token address provided");
-      }
-
-      // Validate amount
-      const amount = Number(options.amount);
-      if (isNaN(amount) || amount <= 0) {
-        throw new Error("Invalid amount provided");
       }
 
       // Get private key from environment
@@ -141,7 +161,29 @@ Example:
       }
 
       const account = privateKeyToAccount(privateKey);
-      await executeSwap(account, options.fromToken, options.toToken, amount);
+
+      let amountToSwap: number;
+      if (options.max) {
+        const { balanceNumber, symbol } = await getTokenBalance(
+          client,
+          options.fromToken,
+          account.address,
+        );
+        console.log(`Available balance: ${balanceNumber} ${symbol}`);
+        amountToSwap = balanceNumber;
+      } else {
+        amountToSwap = Number(options.amount);
+        if (isNaN(amountToSwap) || amountToSwap <= 0) {
+          throw new Error("Invalid amount provided");
+        }
+      }
+
+      await executeSwap(
+        account,
+        options.fromToken,
+        options.toToken,
+        amountToSwap,
+      );
     });
   return program;
 };
