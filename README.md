@@ -1,5 +1,12 @@
 # Berachain Experiments
 
+## Token addresses
+
+- BERA 0x7507c1dc16935B82698e4C63f2746A2fCf994dF8
+- HONEY 0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03
+- USDT 0x05D0dD5135E3eF3aDE32a9eF9Cb06e8D37A6795D
+- STGUSDC 0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c
+
 ## Decode a BeraCroc (BEX) transaction
 
 ```sh
@@ -35,6 +42,17 @@ deno run --allow-all bera-croc-preview-multi-swap.ts \
 --from-token 0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03 \
 --to-token 0x05D0dD5135E3eF3aDE32a9eF9Cb06e8D37A6795D \
 --amount 1
+```
+
+## Swap
+
+Swap STGUSDC for HONEY on BeraCroc MultiSwap.
+
+```sh
+deno run --allow-all bera-croc-multi-swap.ts \
+--from-token 0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c \
+--to-token 0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03 \
+--amount 2
 ```
 
 ## Continuous swap price monitoring
