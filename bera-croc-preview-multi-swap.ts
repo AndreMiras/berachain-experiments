@@ -11,7 +11,7 @@ import {
   formatUnits,
   http,
   isAddress,
-  parseEther,
+  parseUnits,
 } from "viem";
 import { berachainTestnetbArtio } from "viem/chains";
 import { Command } from "npm:commander";
@@ -32,7 +32,7 @@ const defaultToToken = honeyTokenAddress;
 export const previewSwap = async (
   fromToken: string,
   toToken: string,
-  amount: number,
+  fromAmountDecimal: number,
 ) => {
   // Get token symbols for better output
   const [fromTokenSymbol, toTokenSymbol] = await Promise.all([
@@ -48,7 +48,15 @@ export const previewSwap = async (
     }),
   ]);
   const poolIdx = 36000;
-  const amountRaw = parseEther(amount.toString());
+  const fromTokenDecimals = await client.readContract({
+    address: fromToken,
+    abi: erc20Abi,
+    functionName: "decimals",
+  });
+  const fromAmountRaw = parseUnits(
+    fromAmountDecimal.toString(),
+    fromTokenDecimals,
+  );
   const steps = [
     {
       poolIdx,
@@ -61,7 +69,7 @@ export const previewSwap = async (
     address: contractAddress,
     abi: BeraCrocAbi,
     functionName: "previewMultiSwap",
-    args: [steps, amountRaw],
+    args: [steps, fromAmountRaw],
   });
   const toTokenDecimals = await client.readContract({
     address: toToken,
@@ -76,7 +84,7 @@ export const previewSwap = async (
   return {
     fromToken: `${fromTokenSymbol} (${fromToken})`,
     toToken: `${toTokenSymbol} (${toToken})`,
-    amountIn: amount,
+    amountIn: fromAmountDecimal,
     quantityOutDecimal,
     predictedQuantityOutDecimal,
   };
