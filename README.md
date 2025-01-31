@@ -7,6 +7,17 @@
 - USDT 0x05D0dD5135E3eF3aDE32a9eF9Cb06e8D37A6795D
 - STGUSDC 0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c
 
+## Useful links
+
+- Faucet
+  - https://bartio.faucet.berachain.com/
+  - https://faucet.quicknode.com/berachain/bartio/
+- DEX
+  - https://bartio.bex.berachain.com/swap
+  - https://bartio.honey.berachain.com/
+- Governance BGT
+  - https://bartio.station.berachain.com/gauge
+
 ## Decode a BeraCroc (BEX) transaction
 
 ```sh
