@@ -7,8 +7,10 @@
     "jsr:@std/dotenv@~0.225.3": "0.225.3",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "jsr:@std/testing@*": "1.0.7",
+    "npm:abitype@^1.0.8": "1.0.8",
     "npm:commander@*": "13.1.0",
     "npm:commander@^13.1.0": "13.1.0",
+    "npm:graphql-request@^7.1.2": "7.1.2_graphql@16.10.0",
     "npm:viem@^2.22.16": "2.22.16_ws@8.18.0"
   },
   "jsr": {
@@ -35,6 +37,12 @@
   "npm": {
     "@adraffy/ens-normalize@1.11.0": {
       "integrity": "sha512-/3DDPKHqqIqxUULp8yP4zODUY1i+2xvVWsv8A79xGWdCAG+8sb0hRh0Rk2QyOJUnnbyPUAZYcpBuRe3nS2OIUg=="
+    },
+    "@graphql-typed-document-node/core@3.2.0_graphql@16.10.0": {
+      "integrity": "sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==",
+      "dependencies": [
+        "graphql"
+      ]
     },
     "@noble/curves@1.8.1": {
       "integrity": "sha512-warwspo+UYUPep0Q+vtdVB4Ugn8GGQj8iyB3gnRWsztmUHTI3S1nhdiWNsPUGL0vud7JlRRk1XEu7Lq1KGTnMQ==",
@@ -71,6 +79,16 @@
     },
     "eventemitter3@5.0.1": {
       "integrity": "sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA=="
+    },
+    "graphql-request@7.1.2_graphql@16.10.0": {
+      "integrity": "sha512-+XE3iuC55C2di5ZUrB4pjgwe+nIQBuXVIK9J98wrVwojzDW3GMdSBZfxUk8l4j9TieIpjpggclxhNEU9ebGF8w==",
+      "dependencies": [
+        "@graphql-typed-document-node/core",
+        "graphql"
+      ]
+    },
+    "graphql@16.10.0": {
+      "integrity": "sha512-AjqGKbDGUFRKIRCP9tCKiIGHyriz2oHEbPIbEtcSLSs4YjReZOIPQQWek4+6hjw62H9QShXHyaGivGiYVLeYFQ=="
     },
     "isows@1.0.6_ws@8.18.0": {
       "integrity": "sha512-lPHCayd40oW98/I0uvgaHKWCSvkzY27LjWLbtzOm64yQ+G3Q5npjjbdppU65iZXkK1Zt+kH9pfegli0AYfwYYw==",
@@ -110,7 +128,9 @@
   "workspace": {
     "dependencies": [
       "jsr:@std/dotenv@~0.225.3",
+      "npm:abitype@^1.0.8",
       "npm:commander@^13.1.0",
+      "npm:graphql-request@^7.1.2",
       "npm:viem@^2.22.16"
     ]
   }

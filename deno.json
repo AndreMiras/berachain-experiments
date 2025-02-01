@@ -8,7 +8,9 @@
   },
   "imports": {
     "@std/dotenv": "jsr:@std/dotenv@^0.225.3",
+    "abitype": "npm:abitype@^1.0.8",
     "commander": "npm:commander@^13.1.0",
+    "graphql-request": "npm:graphql-request@^7.1.2",
     "viem": "npm:viem@^2.22.16"
   }
 }
