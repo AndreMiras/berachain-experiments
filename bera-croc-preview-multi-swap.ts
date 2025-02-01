@@ -18,6 +18,7 @@ import { Command } from "npm:commander";
 import BeraCrocAbi from "./abi/BeraCrocMultiSwap.json" with { type: "json" };
 import { handleMainError } from "./utils.ts";
 import { getRouterSteps } from "./bartio-bex-router.ts";
+import { getCustomRouterSteps } from "./pool-adapter.ts";
 
 const client = createPublicClient({
   chain: berachainTestnetbArtio,
@@ -57,7 +58,13 @@ export const previewSwap = async (
     fromAmountDecimal.toString(),
     fromTokenDecimals,
   );
+  const stepsCustom = await getCustomRouterSteps(
+    fromToken,
+    toToken,
+    fromAmountRaw,
+  );
   const steps = await getRouterSteps(fromToken, toToken, fromAmountRaw);
+  console.log({ steps, stepsCustom });
   const [quantityOutRaw, predictedQuantityOutRaw] = await client.readContract({
     address: contractAddress,
     abi: BeraCrocAbi,
@@ -74,12 +81,29 @@ export const previewSwap = async (
     predictedQuantityOutRaw,
     toTokenDecimals,
   );
+  const [quantityOutRawCustom, predictedQuantityOutRawCustom] = await client
+    .readContract({
+      address: contractAddress,
+      abi: BeraCrocAbi,
+      functionName: "previewMultiSwap",
+      args: [stepsCustom, fromAmountRaw],
+    });
+  const quantityOutDecimalCustom = formatUnits(
+    quantityOutRawCustom,
+    toTokenDecimals,
+  );
+  const predictedQuantityOutDecimalCustom = formatUnits(
+    predictedQuantityOutRawCustom,
+    toTokenDecimals,
+  );
   return {
     fromToken: `${fromTokenSymbol} (${fromToken})`,
     toToken: `${toTokenSymbol} (${toToken})`,
     amountIn: fromAmountDecimal,
     quantityOutDecimal,
     predictedQuantityOutDecimal,
+    quantityOutDecimalCustom,
+    predictedQuantityOutDecimalCustom,
   };
 };
 
