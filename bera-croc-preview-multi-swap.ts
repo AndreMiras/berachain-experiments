@@ -17,6 +17,7 @@ import { berachainTestnetbArtio } from "viem/chains";
 import { Command } from "npm:commander";
 import BeraCrocAbi from "./abi/BeraCrocMultiSwap.json" with { type: "json" };
 import { handleMainError } from "./utils.ts";
+import { getRouterSteps } from "./bartio-bex-router.ts";
 
 const client = createPublicClient({
   chain: berachainTestnetbArtio,
@@ -57,14 +58,7 @@ export const previewSwap = async (
     fromAmountDecimal.toString(),
     fromTokenDecimals,
   );
-  const steps = [
-    {
-      poolIdx,
-      quote: fromToken,
-      base: toToken,
-      isBuy: false,
-    },
-  ];
+  const steps = await getRouterSteps(fromToken, toToken, fromAmountRaw);
   const [quantityOutRaw, predictedQuantityOutRaw] = await client.readContract({
     address: contractAddress,
     abi: BeraCrocAbi,

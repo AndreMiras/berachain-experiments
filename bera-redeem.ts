@@ -108,7 +108,7 @@ Examples:
         amountToRedeem = floorToDigits(balanceNumber, 2);
       } else {
         amountToRedeem = Number(options.amount);
-        if (isNaN(amountToRedeem) || amount <= 0) {
+        if (isNaN(amountToRedeem) || amountToRedeem <= 0) {
           throw new Error("Invalid amount");
         }
       }

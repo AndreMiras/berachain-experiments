@@ -18,6 +18,7 @@ import { Command } from "npm:commander";
 import { privateKeyToAccount } from "viem/accounts";
 import BeraCrocAbi from "./abi/BeraCrocMultiSwap.json" with { type: "json" };
 import { floorToDigits, getTokenBalance, handleMainError } from "./utils.ts";
+import { getRouterSteps } from "./bartio-bex-router.ts";
 import "jsr:@std/dotenv/load";
 
 const client = createPublicClient({
@@ -100,16 +101,7 @@ const executeSwap = async (
 
   // Execute the swap
   console.log("Executing swap...");
-  const poolIdx = 36000;
-  const steps = [
-    {
-      poolIdx,
-      quote: fromToken,
-      base: toToken,
-      isBuy: false,
-    },
-  ];
-
+  const steps = await getRouterSteps(fromToken, toToken, fromAmountRaw);
   const hash = await walletClient.writeContract({
     address: contractAddress,
     abi: BeraCrocAbi,

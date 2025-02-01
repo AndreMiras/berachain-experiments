@@ -15,6 +15,18 @@ export const handleMainError = (error: unknown) => {
   Deno.exit(1);
 };
 
+/**
+ * Handles HTTP error response, raises an exception on non OK status.
+ */
+export const handleHttpError = (response: Response, consoleError = true) => {
+  if (!response.ok) {
+    const errorMessage =
+      `${response.status} ${response.statusText} (${response.url})`;
+    consoleError && console.error(errorMessage);
+    throw new Error(errorMessage);
+  }
+};
+
 export const getTokenBalance = async (
   client: PublicClient,
   tokenAddress: string,
