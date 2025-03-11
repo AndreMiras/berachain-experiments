@@ -1,4 +1,4 @@
-interface Pool {
+export interface Pool {
   token0: string;
   token1: string;
   reserve0: bigint;
@@ -6,7 +6,7 @@ interface Pool {
   fee: number; // e.g., 0.003 for 0.3%
 }
 
-interface Route {
+export interface Route {
   pools: Pool[];
   path: string[];
   outputAmount: bigint;
@@ -134,26 +134,31 @@ export class Router {
 }
 
 // Example usage:
-const pools = [
-  {
-    token0: "USDC",
-    token1: "ETH",
-    reserve0: BigInt(1000000) * BigInt(1e6), // 1M USDC
-    reserve1: BigInt(500) * BigInt(1e18), // 500 ETH
-    fee: 0.003,
-  },
-  {
-    token0: "ETH",
-    token1: "WBTC",
-    reserve0: BigInt(1000) * BigInt(1e18), // 1000 ETH
-    reserve1: BigInt(50) * BigInt(1e8), // 50 WBTC
-    fee: 0.003,
-  },
-];
+const main = () => {
+  const pools = [
+    {
+      token0: "USDC",
+      token1: "ETH",
+      reserve0: BigInt(1000000) * BigInt(1e6), // 1M USDC
+      reserve1: BigInt(500) * BigInt(1e18), // 500 ETH
+      fee: 0.003,
+    },
+    {
+      token0: "ETH",
+      token1: "WBTC",
+      reserve0: BigInt(1000) * BigInt(1e18), // 1000 ETH
+      reserve1: BigInt(50) * BigInt(1e8), // 50 WBTC
+      fee: 0.003,
+    },
+  ];
 
-const router = new Router(pools);
-const bestRoute = router.findBestRoute(
-  "USDC",
-  "WBTC",
-  BigInt(10000) * BigInt(1e6), // 10,000 USDC
-);
+  const router = new Router(pools);
+  const bestRoute = router.findBestRoute(
+    "USDC",
+    "WBTC",
+    BigInt(10000) * BigInt(1e6), // 10,000 USDC
+  );
+  console.log({ bestRoute });
+};
+
+import.meta.main && main();
