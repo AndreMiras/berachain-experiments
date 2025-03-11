@@ -1,4 +1,11 @@
 {
+  "tasks": {
+    "test": "deno test --coverage --allow-all",
+    "test:debug": "deno test --inspect --allow-all",
+    "test:coverage": "deno task test && deno coverage coverage",
+    "test:coverage:html": "deno task test:coverage --html",
+    "test:coverage:lcov": "deno task test:coverage --lcov --output=coverage/coverage.lcov"
+  },
   "imports": {
     "@std/dotenv": "jsr:@std/dotenv@^0.225.3",
     "commander": "npm:commander@^13.1.0",

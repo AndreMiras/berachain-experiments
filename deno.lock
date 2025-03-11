@@ -1,15 +1,35 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@std/assert@*": "1.0.10",
+    "jsr:@std/assert@^1.0.10": "1.0.10",
     "jsr:@std/dotenv@*": "0.225.3",
     "jsr:@std/dotenv@~0.225.3": "0.225.3",
+    "jsr:@std/internal@^1.0.5": "1.0.5",
+    "jsr:@std/testing@*": "1.0.7",
     "npm:commander@*": "13.1.0",
     "npm:commander@^13.1.0": "13.1.0",
     "npm:viem@^2.22.16": "2.22.16_ws@8.18.0"
   },
   "jsr": {
+    "@std/assert@1.0.10": {
+      "integrity": "59b5cbac5bd55459a19045d95cc7c2ff787b4f8527c0dd195078ff6f9481fbb3",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
     "@std/dotenv@0.225.3": {
       "integrity": "a95e5b812c27b0854c52acbae215856d9cce9d4bbf774d938c51d212711e8d4a"
+    },
+    "@std/internal@1.0.5": {
+      "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
+    },
+    "@std/testing@1.0.7": {
+      "integrity": "aa5f0507352449064b09eff70ac1b6da3f765ee66bcc20dad9e5e433776580d5",
+      "dependencies": [
+        "jsr:@std/assert@^1.0.10",
+        "jsr:@std/internal"
+      ]
     }
   },
   "npm": {
