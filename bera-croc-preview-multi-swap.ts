@@ -48,7 +48,6 @@ export const previewSwap = async (
       functionName: "symbol",
     }),
   ]);
-  const poolIdx = 36000;
   const fromTokenDecimals = await client.readContract({
     address: fromToken,
     abi: erc20Abi,

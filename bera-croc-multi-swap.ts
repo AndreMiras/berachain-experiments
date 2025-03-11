@@ -32,31 +32,6 @@ const honeyTokenAddress = "0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03";
 const defaultFromToken = wBeraTokenAddress;
 const defaultToToken = honeyTokenAddress;
 
-const getMaxAmount = async (tokenAddress: string, accountAddress: string) => {
-  const [balance, decimals, symbol] = await Promise.all([
-    client.readContract({
-      address: tokenAddress,
-      abi: erc20Abi,
-      functionName: "balanceOf",
-      args: [accountAddress],
-    }),
-    client.readContract({
-      address: tokenAddress,
-      abi: erc20Abi,
-      functionName: "decimals",
-    }),
-    client.readContract({
-      address: tokenAddress,
-      abi: erc20Abi,
-      functionName: "symbol",
-    }),
-  ]);
-
-  const balanceDecimal = Number(formatUnits(balance, decimals));
-  console.log(`Available balance: ${balanceDecimal} ${symbol}`);
-  return balanceDecimal;
-};
-
 const executeSwap = async (
   account: Account,
   fromToken: string,
