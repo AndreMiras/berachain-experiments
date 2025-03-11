@@ -1,4 +1,4 @@
-import { erc20Abi, formatUnits, PublicClient } from "viem";
+import { erc20Abi, formatUnits, getAddress, PublicClient } from "viem";
 
 export interface TokenBalance {
   balance: bigint;
@@ -34,18 +34,18 @@ export const getTokenBalance = async (
 ): Promise<TokenBalance> => {
   const [balance, decimals, symbol] = await Promise.all([
     client.readContract({
-      address: tokenAddress,
+      address: getAddress(tokenAddress),
       abi: erc20Abi,
       functionName: "balanceOf",
-      args: [accountAddress],
+      args: [getAddress(accountAddress)],
     }),
     client.readContract({
-      address: tokenAddress,
+      address: getAddress(tokenAddress),
       abi: erc20Abi,
       functionName: "decimals",
     }),
     client.readContract({
-      address: tokenAddress,
+      address: getAddress(tokenAddress),
       abi: erc20Abi,
       functionName: "symbol",
     }),
